@@ -42,8 +42,8 @@ namespace DexpBugDetectorWpf
 			this.Topmost = true;
 			this.Left = 0;
 			this.Top = 0;
-			this.Width = 0.1;
-			this.Height = 0.1;
+			this.Width = 1920;
+			this.Height = 1;
 
 			//this.AllowsTransparency = true;
 			//this.Opacity = 0.5;

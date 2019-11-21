@@ -8,7 +8,7 @@
         Title="MainWindow" Height="111" Width="111"
 		Topmost="True"
 		Left="0" Top="0" ResizeMode="NoResize" WindowStyle="None" ShowInTaskbar="False" > 
-    <Grid Background="#FF0F0F0F">
+    <Grid Background="#FFFFFFFF">
         
     </Grid>
 </Window>
