@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace DexpBugDetectorWpf
 {
@@ -21,10 +23,19 @@ namespace DexpBugDetectorWpf
 			drawingBrush.AlignmentY = AlignmentY.Top;
 			this.Background = drawingBrush;
 
+			this.SetIcon();
+
 			this.Setup();
 		}
 
 		private readonly int maxHeight;
+
+		private void SetIcon()
+		{
+			Bitmap bitmap = DexpBugDetectorWpf.Properties.Resources.tv.ToBitmap();
+			IntPtr hBitmap = bitmap.GetHbitmap();
+			this.Icon = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+		}
 
 		private static DrawingVisual CreateDrawingVisualRectangle(out int heigth)
 		{
