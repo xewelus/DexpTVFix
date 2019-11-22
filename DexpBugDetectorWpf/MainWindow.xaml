@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DexpBugDetectorWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="111" Width="111"
+        Title="MainWindow" 
 		Topmost="True"
-		Left="0" Top="0" ResizeMode="NoResize" WindowStyle="None" ShowInTaskbar="False" > 
-    <Grid Background="#FFFFFFFF">
-        
-    </Grid>
+		Left="0" Top="0" 
+        Height="1" Width="1"
+        ResizeMode="NoResize" 
+        WindowStyle="None" 
+        ShowInTaskbar="False"
+		IsHitTestVisible="False"
+        AllowsTransparency="True"> 
 </Window>

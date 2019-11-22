@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -26,12 +27,20 @@ namespace DexpBugDetectorWpf
 			InitializeComponent();
 
 			this.Setup();
-
-			this.Deactivated += this.MainWindow_Deactivated;
 		}
 
-		private void MainWindow_Deactivated(object sender, EventArgs e)
+		protected override void OnSourceInitialized(EventArgs e)
 		{
+			base.OnSourceInitialized(e);
+
+			WindowInteropHelper windowInteropHelper = new WindowInteropHelper(this);
+			WindowsServices.SetWindowExTransparent(windowInteropHelper.Handle);
+		}
+
+		protected override void OnDeactivated(EventArgs e)
+		{
+			base.OnDeactivated(e);
+
 			Setup();
 			Thread.Sleep(2000);
 			Setup();
@@ -45,7 +54,7 @@ namespace DexpBugDetectorWpf
 			this.Width = 1920;
 			this.Height = 1;
 
-			//this.AllowsTransparency = true;
+			//this.Background = new SolidColorBrush(Color.FromArgb(128, 255, 121, 44));
 			//this.Opacity = 0.5;
 		}
 	}
