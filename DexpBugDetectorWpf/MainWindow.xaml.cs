@@ -1,19 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DexpBugDetectorWpf
 {
@@ -24,9 +12,38 @@ namespace DexpBugDetectorWpf
 	{
 		public MainWindow()
 		{
-			InitializeComponent();
+			this.InitializeComponent();
+
+			DrawingVisual drawingVisual = CreateDrawingVisualRectangle(out this.maxHeight);
+			DrawingBrush drawingBrush = new DrawingBrush(drawingVisual.Drawing);
+			drawingBrush.Stretch = Stretch.None;
+			drawingBrush.AlignmentX = AlignmentX.Left;
+			drawingBrush.AlignmentY = AlignmentY.Top;
+			this.Background = drawingBrush;
 
 			this.Setup();
+		}
+
+		private readonly int maxHeight;
+
+		private static DrawingVisual CreateDrawingVisualRectangle(out int heigth)
+		{
+			heigth = 0;
+
+			DrawingVisual drawingVisual = new DrawingVisual();
+
+			using (DrawingContext dc = drawingVisual.RenderOpen())
+			{
+				foreach (Configuration.RectInfo rectInfo in Configuration.Rects)
+				{
+					Rect rect = new Rect(rectInfo.X, rectInfo.Y, rectInfo.Width, rectInfo.Height);
+					dc.DrawRectangle(new SolidColorBrush(rectInfo.Color), null, rect);
+
+					heigth = Math.Max(heigth, rectInfo.Height);
+				}
+			}
+
+			return drawingVisual;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -40,10 +57,7 @@ namespace DexpBugDetectorWpf
 		protected override void OnDeactivated(EventArgs e)
 		{
 			base.OnDeactivated(e);
-
-			Setup();
-			Thread.Sleep(2000);
-			Setup();
+			this.Setup();
 		}
 
 		private void Setup()
@@ -52,10 +66,7 @@ namespace DexpBugDetectorWpf
 			this.Left = 0;
 			this.Top = 0;
 			this.Width = 1920;
-			this.Height = 1;
-
-			//this.Background = new SolidColorBrush(Color.FromArgb(128, 255, 121, 44));
-			//this.Opacity = 0.5;
+			this.Height = this.maxHeight;
 		}
 	}
 }

@@ -13,5 +13,6 @@
         WindowStyle="None" 
         ShowInTaskbar="False"
 		IsHitTestVisible="False"
-        AllowsTransparency="True"> 
+        AllowsTransparency="True"
+        SnapsToDevicePixels="True"> 
 </Window>
