@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DexpBugDetectorWpf", "DexpBugDetectorWpf.csproj", "{C125840C-078C-469B-98ED-F5C1513FC87A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DexpBugDetectorWpf", "DexpBugDetectorWpf\DexpBugDetectorWpf.csproj", "{C125840C-078C-469B-98ED-F5C1513FC87A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Support", "..\Support\Support.csproj", "{42EF1F69-4C4C-4937-9323-AAC91F543C7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Support", "Support\Support.csproj", "{42EF1F69-4C4C-4937-9323-AAC91F543C7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
