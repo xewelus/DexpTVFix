@@ -1,0 +1,3 @@
+[submodule "DexpBugDetectorWpf/Common"]
+	path = DexpBugDetectorWpf/Common
+	url = https://bitbucket.org/xewelus/cscommongit.git
