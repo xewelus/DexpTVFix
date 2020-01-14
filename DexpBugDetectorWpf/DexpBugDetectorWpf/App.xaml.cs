@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Forms;
-using Support;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 

@@ -112,10 +112,6 @@
       <Project>{f611885d-38b2-4c9c-b736-08312c0f19dd}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Support\Support.csproj">
-      <Project>{42ef1f69-4c4c-4937-9323-aac91f543c7c}</Project>
-      <Name>Support</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
