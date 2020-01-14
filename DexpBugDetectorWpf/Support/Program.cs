@@ -16,7 +16,7 @@ namespace Support
 			Application.ThreadException += ApplicationOnThreadException;
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
+			Application.Run(new TestForm());
 		}
 
 		private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs e)
