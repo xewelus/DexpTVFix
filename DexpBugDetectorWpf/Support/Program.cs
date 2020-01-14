@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
+using Common;
 
 namespace Support
 {
@@ -13,9 +13,22 @@ namespace Support
 		[STAThread]
 		static void Main()
 		{
+			Application.ThreadException += ApplicationOnThreadException;
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainForm());
+		}
+
+		private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs e)
+		{
+			if (e.Exception == null)
+			{
+				UIHelper.ShowError("Unknown error.");
+			}
+			else
+			{
+				UIHelper.ShowError(e.Exception);
+			}
 		}
 	}
 }
