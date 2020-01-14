@@ -61,7 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Capturer.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="GDI.cs" />
     <Compile Include="WindowsServices.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -104,6 +106,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\tv.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common\Common.csproj">
+      <Project>{f611885d-38b2-4c9c-b736-08312c0f19dd}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Support\Support.csproj">
+      <Project>{42ef1f69-4c4c-4937-9323-aac91f543c7c}</Project>
+      <Name>Support</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
