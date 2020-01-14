@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Common;
+using Common.Classes;
 using static System.Drawing.Bitmap;
 
 namespace Support
@@ -39,9 +42,11 @@ namespace Support
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetWindowDC(IntPtr ptr);
 
+		private BaseMode mode;
 		private bool isStarted;
-		private DateTime? startDate;
-		private int captureCount;
+		private bool isStarted1;
+		private bool isStarted2;
+
 		private void btnCapture_Click(object sender, EventArgs e)
 		{
 			try
@@ -54,43 +59,69 @@ namespace Support
 			}
 		}
 
-		private void btnStart1_Click(object sender, EventArgs e)
+		private void StartStopClick(BaseMode baseMode, Button currentButton, params Button[] otherButtons)
 		{
+			this.mode = baseMode;
 			this.isStarted = !this.isStarted;
+
 			if (this.isStarted)
 			{
-				this.btnStart1.Text = "Стоп";
-				this.startDate = DateTime.Now;
-				this.captureCount = 0;
+				this.mode.Start();
+				currentButton.Text = "Стоп";
+
+				foreach (Button button in otherButtons)
+				{
+					button.Enabled = false;
+				}
+
 				this.timer.Start();
 			}
 			else
 			{
 				this.timer.Stop();
-				this.startDate = null;
-				this.btnStart1.Text = "Старт";
+
+				if (this.mode != null)
+				{
+					this.mode.Stop();
+					this.mode = null;
+				}
+
+				currentButton.Text = "Старт";
+
+				foreach (Button button in otherButtons)
+				{
+					button.Enabled = true;
+				}
 			}
 		}
 
+		private void btnStart1_Click(object sender, EventArgs e)
+		{
+			this.StartStopClick(new Mode1(this), this.btnStart1, this.btnStart2);
+		}
+	
 		private void btnStart2_Click(object sender, EventArgs e)
 		{
-
+			this.StartStopClick(new Mode2(this), this.btnStart2, this.btnStart1);
 		}
 
 		private void timer_Tick(object sender, EventArgs e)
 		{
-			if (this.isStarted)
+			if (this.mode != null)
 			{
-				CaptureScreen();
-				this.captureCount++;
-
-				if (this.startDate != null)
-				{
-					double secs = DateTime.Now.Subtract(this.startDate.Value).TotalSeconds;
-					double speed = this.captureCount / secs;
-					this.lblStatus.Text = string.Format("Всего: {0}, скорость: {1:0} в секунду.", this.captureCount, speed);
-				}
+				this.mode.TimerTick();
 			}
+		}
+
+		private void ShowError(Exception error)
+		{
+			if (this.InvokeRequired)
+			{
+				this.BeginInvoke(new Action<Exception>(this.ShowError), error);
+				return;
+			}
+
+			UIHelper.ShowError(error);
 		}
 
 		private static void CaptureScreen()
@@ -100,7 +131,16 @@ namespace Support
 
 		private static void SaveBitmap(Bitmap bitmap)
 		{
-			bitmap.Save(string.Format(@"c:\temp\capture\{0:yyyyMMdd HH mm ss ffffff}.png", DateTime.Now));
+			SaveBitmap(bitmap, DateTime.Now);
+		}
+
+		private static void SaveBitmap(Bitmap bitmap, DateTime? time)
+		{
+			if (time == null)
+			{
+				time = DateTime.Now;
+			}
+			bitmap.Save(string.Format(@"c:\temp\capture\{0:yyyyMMdd HH mm ss ffffff}.png", time.Value));
 		}
 
 		private static void CaptureScreen(Action<Bitmap> action, bool needDispose = true)
@@ -167,6 +207,133 @@ namespace Support
 				{
 					ReleaseDC(hDesk, hSrce);
 				}
+			}
+		}
+
+		private class BaseMode
+		{
+			protected readonly MainForm form;
+			protected BaseMode(MainForm form)
+			{
+				this.form = form;
+			}
+
+			public virtual void TimerTick()
+			{
+			}
+
+			public virtual void Start()
+			{
+			}
+
+			public virtual void Stop()
+			{
+			}
+		}
+
+		private class Mode1 : BaseMode
+		{
+			private readonly DateTime startDate = DateTime.Now;
+			private int captureCount;
+
+			public Mode1(MainForm form) : base(form)
+			{
+			}
+
+			public override void TimerTick()
+			{
+				CaptureScreen();
+				this.captureCount++;
+
+				double secs = DateTime.Now.Subtract(this.startDate).TotalSeconds;
+				double speed = this.captureCount / secs;
+				this.form.lblStatus.Text = string.Format("Всего: {0}, скорость: {1:0} в секунду.", this.captureCount, speed);
+			}
+		}
+
+		private class Mode2 : BaseMode
+		{
+			private readonly DateTime startDate = DateTime.Now;
+			private int captureCount;
+			private int savedCount;
+			private readonly PairsList<Bitmap, DateTime> toSave = new PairsList<Bitmap, DateTime>();
+			private bool isComplete;
+
+			public Mode2(MainForm form) : base(form)
+			{
+				Thread thread = new Thread(this.ThreadMethod);
+				thread.Start();
+			}
+
+			private void ThreadMethod()
+			{
+				try
+				{
+					while (!this.isComplete)
+					{
+						KeyValuePair<Bitmap, DateTime>? pair = null;
+						lock (this.toSave)
+						{
+							if (this.toSave.Count > 0)
+							{
+								pair = this.toSave[0];
+								this.toSave.RemoveAt(0);
+							}
+						}
+
+						if (pair == null)
+						{
+							Thread.Sleep(10);
+							continue;
+						}
+
+						Bitmap bitmap = pair.Value.Key;
+						SaveBitmap(bitmap, pair.Value.Value);
+						bitmap.Dispose();
+						this.savedCount++;
+
+						this.UpdateStatus();
+					}
+				}
+				catch (Exception ex)
+				{
+					this.form.ShowError(ex);
+				}
+			}
+
+			public override void TimerTick()
+			{
+				CaptureScreen(this.AddToList, false);
+				this.captureCount++;
+
+				this.UpdateStatus();
+			}
+
+			private void AddToList(Bitmap bitmap)
+			{
+				lock (this.toSave)
+				{
+					this.toSave.Add(bitmap, DateTime.Now);
+				}
+			}
+
+			private void UpdateStatus()
+			{
+				if (this.form.InvokeRequired)
+				{
+					this.form.BeginInvoke(new Action(this.UpdateStatus));
+					return;
+				}
+
+				double secs = DateTime.Now.Subtract(this.startDate).TotalSeconds;
+				double speed = this.captureCount / secs;
+				this.form.lblStatus.Text = string.Format("Всего: {0}, сохранено: {1}, скорость: {2:0} в секунду.", this.captureCount, this.savedCount, speed);
+			}
+
+			public override void Stop()
+			{
+				base.Stop();
+				this.isComplete = true;
 			}
 		}
 	}
