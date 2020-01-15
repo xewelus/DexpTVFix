@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,7 +45,19 @@ namespace DexpBugDetectorWpf
 		{
 			this.startRecordItem.Enabled = false;
 			this.stopRecordItem.Enabled = true;
-			Capturer.Start(this.OnCaptureComplete, this.OnCaptureError);
+
+			int threadsCount;
+			string threadsCountStr = ConfigurationManager.AppSettings["CaptureThreadsCount"];
+			if (string.IsNullOrEmpty(threadsCountStr))
+			{
+				threadsCount = 1;
+			}
+			else
+			{
+				threadsCount = int.Parse(threadsCountStr);
+			}
+
+			Capturer.Start(this.OnCaptureComplete, this.OnCaptureError, threadsCount);
 
 			this.ShowPopup<CaptureStartPopup>();
 		}
