@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
@@ -44,6 +45,18 @@ namespace DexpBugDetectorWpf
 			this.startRecordItem.Enabled = false;
 			this.stopRecordItem.Enabled = true;
 			Capturer.Start(this.OnCaptureComplete, this.OnCaptureError);
+
+			this.ShowPopup<CaptureStartPopup>();
+		}
+
+		private async void ShowPopup<T>() where T : Window, new()
+		{
+			T popup = new T();
+			popup.Show();
+
+			await Task.Delay(500);
+
+			popup.Close();
 		}
 
 		private void OnCaptureComplete(string folder)

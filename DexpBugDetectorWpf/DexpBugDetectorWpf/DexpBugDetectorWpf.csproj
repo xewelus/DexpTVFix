@@ -62,9 +62,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Capturer.cs" />
+    <Compile Include="CaptureStartPopup.xaml.cs">
+      <DependentUpon>CaptureStartPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Configuration.cs" />
     <Compile Include="GDI.cs" />
     <Compile Include="WindowsServices.cs" />
+    <Page Include="CaptureStartPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
