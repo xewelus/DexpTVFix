@@ -59,6 +59,8 @@ namespace DexpBugDetectorWpf
 			MessageBoxResult result = MessageBox.Show("Захват завершен. Открыть папку сохранения?", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result == MessageBoxResult.Yes)
 			{
+				folder = folder.Replace("/", "\\");
+				folder = string.Format("\"{0}\"", folder);
 				Process.Start("explorer", folder);
 			}
 		}

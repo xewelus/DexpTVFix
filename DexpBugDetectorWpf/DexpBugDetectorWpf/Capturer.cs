@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -38,7 +39,11 @@ namespace DexpBugDetectorWpf
 
 		public static string GetCaptureFolder()
 		{
-			string folder = FS.GetAppFolder("capture");
+			string folder = ConfigurationManager.AppSettings["CaptureFolder"];
+			if (string.IsNullOrEmpty(folder))
+			{
+				folder = FS.GetAppFolder("capture");
+			}
 			if (!Directory.Exists(folder))
 			{
 				Directory.CreateDirectory(folder);
